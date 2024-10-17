@@ -13,7 +13,3 @@
 # MAGIC %sql
 # MAGIC CREATE TABLE product as
 # MAGIC SELECT *,current_timestamp() as ingestion_date FROM JSON.`/Volumes/maq_databricks/default/raw/products.json`
-
-# COMMAND ----------
-
-
