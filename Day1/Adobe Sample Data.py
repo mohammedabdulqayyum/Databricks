@@ -28,4 +28,36 @@ adobe_json_data = {
 
 # COMMAND ----------
 
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+ 
+# Assuming `spark` is your SparkSession
+# Convert the JSON data to a DataFrame
+df = spark.createDataFrame([adobe_json_data])
+ 
+# Explode the 'batter' and 'topping' arrays to create a flat structure
+df_batters = df.selectExpr("id as donut_id", "type as donut_type", "name", "ppu", "explode(batters.batter) as batter")
+df_toppings = df.selectExpr("id as donut_id", "explode(topping) as topping")
+combined_df = df_batters.join(df_toppings, "donut_id", "outer")
+combined_df.display()
 
+# COMMAND ----------
+
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+ 
+# Assuming `spark` is your SparkSession
+# Convert the JSON data to a DataFrame
+df = spark.createDataFrame([adobe_json_data])
+ 
+# Explode the 'batter' and 'topping' arrays to create a flat structure
+df_batters = df.selectExpr("id as donut_id", "type as donut_type", "name", "ppu", "explode(batters.batter) as batter")
+df_toppings = df.selectExpr("id as donut_id", "explode(topping) as topping")
+combined_df = df_batters.join(df_toppings, "donut_id", "outer")
+ 
+(combined_df.withColumn("batter_id",col("batter.id"))
+ .withColumn("batter_type",col("batter.type"))
+ .withColumn("topping_id",col("topping.id"))
+ .withColumn("topping_type",col("topping.type"))
+ .drop("batter","topping")
+ .display())
